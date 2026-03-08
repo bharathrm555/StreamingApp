@@ -1,0 +1,60 @@
+{{- if and .Values.ingress.enabled .Values.ingress.host }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: streamingapp-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+  annotations:
+    {{- range $k, $v := .Values.ingress.annotations }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /api/streaming
+            pathType: Prefix
+            backend:
+              service:
+                name: streamingapp-streaming-brm
+                port:
+                  number: {{ .Values.services.streaming.servicePort }}
+          - path: /api/admin
+            pathType: Prefix
+            backend:
+              service:
+                name: streamingapp-admin-brm
+                port:
+                  number: {{ .Values.services.admin.servicePort }}
+          - path: /api/chat
+            pathType: Prefix
+            backend:
+              service:
+                name: streamingapp-chat-brm
+                port:
+                  number: {{ .Values.services.chat.servicePort }}
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: streamingapp-chat-brm
+                port:
+                  number: {{ .Values.services.chat.servicePort }}
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: streamingapp-auth-brm
+                port:
+                  number: {{ .Values.services.auth.servicePort }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: streamingapp-frontend-brm
+                port:
+                  number: {{ .Values.services.frontend.servicePort }}
+{{- end }}

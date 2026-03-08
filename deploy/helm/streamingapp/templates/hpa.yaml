@@ -1,0 +1,104 @@
+{{- if .Values.services.auth.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: streamingapp-auth-brm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: streamingapp-auth-brm
+  minReplicas: {{ .Values.services.auth.hpa.minReplicas }}
+  maxReplicas: {{ .Values.services.auth.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.services.auth.hpa.cpuUtilization }}
+---
+{{- end }}
+{{- if .Values.services.streaming.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: streamingapp-streaming-brm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: streamingapp-streaming-brm
+  minReplicas: {{ .Values.services.streaming.hpa.minReplicas }}
+  maxReplicas: {{ .Values.services.streaming.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.services.streaming.hpa.cpuUtilization }}
+---
+{{- end }}
+{{- if .Values.services.admin.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: streamingapp-admin-brm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: streamingapp-admin-brm
+  minReplicas: {{ .Values.services.admin.hpa.minReplicas }}
+  maxReplicas: {{ .Values.services.admin.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.services.admin.hpa.cpuUtilization }}
+---
+{{- end }}
+{{- if .Values.services.chat.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: streamingapp-chat-brm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: streamingapp-chat-brm
+  minReplicas: {{ .Values.services.chat.hpa.minReplicas }}
+  maxReplicas: {{ .Values.services.chat.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.services.chat.hpa.cpuUtilization }}
+---
+{{- end }}
+{{- if .Values.services.frontend.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: streamingapp-frontend-brm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: streamingapp-frontend-brm
+  minReplicas: {{ .Values.services.frontend.hpa.minReplicas }}
+  maxReplicas: {{ .Values.services.frontend.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.services.frontend.hpa.cpuUtilization }}
+{{- end }}

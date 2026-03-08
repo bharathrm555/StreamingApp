@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamingapp-auth-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+    app: streamingapp-auth-brm
+spec:
+  replicas: {{ .Values.services.auth.replicaCount }}
+  selector:
+    matchLabels:
+      app: streamingapp-auth-brm
+  template:
+    metadata:
+      labels:
+        app: streamingapp-auth-brm
+    spec:
+      containers:
+        - name: auth
+          image: {{ include "streamingapp.image" (dict "root" . "component" "auth") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.auth.containerPort }}
+          env:
+            - name: PORT
+              value: {{ .Values.services.auth.containerPort | quote }}
+            - name: MONGO_URI
+              value: {{ .Values.global.mongoUri | quote }}
+            - name: CLIENT_URLS
+              value: {{ join "," .Values.global.clientUrls | quote }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: streamingapp-secrets-brm
+                  key: JWT_SECRET
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: streamingapp-secrets-brm
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streamingapp-secrets-brm
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: streamingapp-secrets-brm
+                  key: AWS_REGION
+            - name: AWS_S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: streamingapp-secrets-brm
+                  key: AWS_S3_BUCKET
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.services.auth.containerPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.services.auth.containerPort }}
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.services.auth.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamingapp-auth-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+    app: streamingapp-auth-brm
+spec:
+  type: ClusterIP
+  selector:
+    app: streamingapp-auth-brm
+  ports:
+    - name: http
+      port: {{ .Values.services.auth.servicePort }}
+      targetPort: {{ .Values.services.auth.containerPort }}

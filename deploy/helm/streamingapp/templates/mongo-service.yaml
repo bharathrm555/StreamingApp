@@ -1,0 +1,15 @@
+{{- if .Values.mongo.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamingapp-mongo-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+spec:
+  ports:
+    - name: mongo
+      port: {{ .Values.mongo.port }}
+      targetPort: {{ .Values.mongo.port }}
+  selector:
+    app: streamingapp-mongo-brm
+{{- end }}

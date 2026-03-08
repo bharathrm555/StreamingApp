@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamingapp-frontend-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+    app: streamingapp-frontend-brm
+spec:
+  replicas: {{ .Values.services.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: streamingapp-frontend-brm
+  template:
+    metadata:
+      labels:
+        app: streamingapp-frontend-brm
+    spec:
+      containers:
+        - name: frontend
+          image: {{ include "streamingapp.image" (dict "root" . "component" "frontend") }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.frontend.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.services.frontend.containerPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.services.frontend.containerPort }}
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.services.frontend.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamingapp-frontend-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+    app: streamingapp-frontend-brm
+spec:
+  type: ClusterIP
+  selector:
+    app: streamingapp-frontend-brm
+  ports:
+    - name: http
+      port: {{ .Values.services.frontend.servicePort }}
+      targetPort: {{ .Values.services.frontend.containerPort }}

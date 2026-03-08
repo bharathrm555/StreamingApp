@@ -1,0 +1,15 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: streaming-eks-brm
+  region: ap-south-1
+
+managedNodeGroups:
+  - name: app-ng-brm
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 4
+    volumeSize: 30
+    ssh:
+      allow: true

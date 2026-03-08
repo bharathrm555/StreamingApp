@@ -1,0 +1,40 @@
+{{- if .Values.mongo.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: streamingapp-mongo-brm
+  labels:
+    {{- include "streamingapp.labels" . | nindent 4 }}
+spec:
+  serviceName: streamingapp-mongo-brm
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamingapp-mongo-brm
+  template:
+    metadata:
+      labels:
+        app: streamingapp-mongo-brm
+    spec:
+      containers:
+        - name: mongo
+          image: {{ .Values.mongo.image }}
+          ports:
+            - containerPort: {{ .Values.mongo.port }}
+              name: mongo
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- if .Values.mongo.persistence.storageClass }}
+        storageClassName: {{ .Values.mongo.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.mongo.persistence.size }}
+{{- end }}

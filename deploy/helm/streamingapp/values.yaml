@@ -1,0 +1,124 @@
+global:
+  clientUrls:
+    - http://localhost:3000
+  mongoUri: mongodb://streamingapp-mongo-brm:27017/streamingapp
+
+image:
+  registry: ""
+  repository: streamingapp-brm
+  pullPolicy: IfNotPresent
+  tags:
+    auth: auth-latest
+    streaming: streaming-latest
+    admin: admin-latest
+    chat: chat-latest
+    frontend: frontend-latest
+
+secrets:
+  jwtSecret: changeme
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsRegion: ap-south-1
+  awsS3Bucket: ""
+  awsCdnUrl: ""
+
+mongo:
+  enabled: true
+  image: mongo:6
+  port: 27017
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: ""
+
+services:
+  auth:
+    replicaCount: 1
+    containerPort: 3001
+    servicePort: 3001
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    hpa:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      cpuUtilization: 70
+  streaming:
+    replicaCount: 1
+    containerPort: 3002
+    servicePort: 3002
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 600m
+        memory: 768Mi
+    hpa:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      cpuUtilization: 70
+  admin:
+    replicaCount: 1
+    containerPort: 3003
+    servicePort: 3003
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    hpa:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      cpuUtilization: 70
+  chat:
+    replicaCount: 1
+    containerPort: 3004
+    servicePort: 3004
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 600m
+        memory: 768Mi
+    hpa:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      cpuUtilization: 70
+  frontend:
+    replicaCount: 1
+    containerPort: 80
+    servicePort: 80
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 400m
+        memory: 512Mi
+    hpa:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      cpuUtilization: 70
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ""
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "streamingapp-chat-brm"

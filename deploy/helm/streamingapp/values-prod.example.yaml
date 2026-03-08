@@ -1,0 +1,79 @@
+global:
+  clientUrls:
+    - https://app.example.com
+  mongoUri: mongodb://streamingapp-mongo-brm:27017/streamingapp
+
+image:
+  registry: 123456789012.dkr.ecr.ap-south-1.amazonaws.com
+  repository: streamingapp-brm
+  pullPolicy: IfNotPresent
+  tags:
+    auth: auth-v1
+    streaming: streaming-v1
+    admin: admin-v1
+    chat: chat-v1
+    frontend: frontend-v1
+
+secrets:
+  jwtSecret: change-this-strong-secret
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsRegion: ap-south-1
+  awsS3Bucket: your-s3-bucket-name
+  awsCdnUrl: ""
+
+mongo:
+  enabled: true
+  image: mongo:6
+  port: 27017
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: gp3
+
+services:
+  auth:
+    replicaCount: 2
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+      cpuUtilization: 70
+  streaming:
+    replicaCount: 2
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 6
+      cpuUtilization: 65
+  admin:
+    replicaCount: 2
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      cpuUtilization: 70
+  chat:
+    replicaCount: 2
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 6
+      cpuUtilization: 65
+  frontend:
+    replicaCount: 2
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      cpuUtilization: 70
+
+ingress:
+  enabled: true
+  className: nginx
+  host: app.example.com
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "streamingapp-chat-brm"
