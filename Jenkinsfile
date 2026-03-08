@@ -30,6 +30,9 @@ pipeline {
     stage('Preflight') {
       steps {
         script {
+          env.AWS_ACCOUNT_ID = params.AWS_ACCOUNT_ID
+          env.AWS_REGION = params.AWS_REGION
+
           env.BUILD_TAG_RESOLVED = params.IMAGE_TAG?.trim() ? params.IMAGE_TAG.trim() : env.BUILD_NUMBER
           env.ECR_REGISTRY = "${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_REGION}.amazonaws.com"
           env.ECR_IMAGE_BASE = "${env.ECR_REGISTRY}/${params.ECR_REPOSITORY}"
