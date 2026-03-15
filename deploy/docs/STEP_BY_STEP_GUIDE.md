@@ -10,9 +10,15 @@ This guide is simplified to meet your requirement with minimal moving parts.
 - Helper scripts:
   - `deploy/scripts/create-ecr-repos.sh`
   - `deploy/scripts/build-and-push.sh`
-  - `deploy/scripts/deploy-helm.sh`
+  - `deploy/scripts/deploy-helm.sh` (EKS flow)
+  - `deploy/scripts/create-k8s-ecr-pull-secret.sh` (kind/local flow)
 
 All new Kubernetes resources use `-brm` suffix.
+
+## 1.1) If you are deploying to local kind (instead of EKS)
+
+Use the dedicated guide:
+- `deploy/docs/KIND_STEP_BY_STEP_GUIDE.md`
 
 ## 2) Tool check on your machine
 

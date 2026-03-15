@@ -15,6 +15,10 @@ spec:
       labels:
         app: streamingapp-frontend-brm
     spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: frontend
           image: {{ include "streamingapp.image" (dict "root" . "component" "frontend") }}

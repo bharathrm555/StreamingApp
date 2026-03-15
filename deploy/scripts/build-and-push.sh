@@ -24,9 +24,9 @@ FRONTEND_TAG="frontend-${IMAGE_TAG}"
 aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
 
 docker build -t streamingapp-auth-brm:"${AUTH_TAG}" ./backend/authService
-docker build -f ./backend/streamingService/Dockerfile -t streamingapp-streaming-brm:"${STREAMING_TAG}" ./backend
-docker build -f ./backend/adminService/Dockerfile -t streamingapp-admin-brm:"${ADMIN_TAG}" ./backend
-docker build -f ./backend/chatService/Dockerfile -t streamingapp-chat-brm:"${CHAT_TAG}" ./backend
+docker build -t streamingapp-streaming-brm:"${STREAMING_TAG}" ./backend/streamingService
+docker build -t streamingapp-admin-brm:"${ADMIN_TAG}" ./backend/adminService
+docker build -t streamingapp-chat-brm:"${CHAT_TAG}" ./backend/chatService
 docker build \
   --build-arg REACT_APP_AUTH_API_URL="${PUBLIC_BASE_URL}/api" \
   --build-arg REACT_APP_STREAMING_API_URL="${PUBLIC_BASE_URL}/api/streaming" \

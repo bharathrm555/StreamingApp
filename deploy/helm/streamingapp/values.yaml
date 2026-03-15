@@ -7,6 +7,7 @@ image:
   registry: ""
   repository: streamingapp-brm
   pullPolicy: IfNotPresent
+  pullSecrets: []
   tags:
     auth: auth-latest
     streaming: streaming-latest
@@ -27,7 +28,7 @@ mongo:
   image: mongo:6
   port: 27017
   persistence:
-    enabled: true
+    enabled: false
     size: 8Gi
     storageClass: ""
 
