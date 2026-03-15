@@ -34,16 +34,22 @@ pipeline {
         script {
           env.AWS_ACCOUNT_ID = params.AWS_ACCOUNT_ID
           env.AWS_REGION = params.AWS_REGION
+          env.ECR_REPOSITORY = (params.ECR_REPOSITORY ?: 'streamingapp-brm').trim()
+          env.K8S_NAMESPACE = (params.K8S_NAMESPACE ?: 'streaming-brm').trim()
+          env.HELM_RELEASE = (params.HELM_RELEASE ?: 'streamingapp-brm').trim()
+          env.KUBE_CONTEXT = (params.KUBE_CONTEXT ?: 'kind-kind').trim()
+          env.IMAGE_PULL_SECRET_NAME = (params.IMAGE_PULL_SECRET_NAME ?: 'ecr-pull-secret').trim()
+          env.FRONTEND_PUBLIC_BASE_URL = (params.FRONTEND_PUBLIC_BASE_URL ?: 'http://streamingapp.local').trim()
 
           env.BUILD_TAG_RESOLVED = params.IMAGE_TAG?.trim() ? params.IMAGE_TAG.trim() : env.BUILD_NUMBER
           env.ECR_REGISTRY = "${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_REGION}.amazonaws.com"
-          env.ECR_IMAGE_BASE = "${env.ECR_REGISTRY}/${params.ECR_REPOSITORY}"
+          env.ECR_IMAGE_BASE = "${env.ECR_REGISTRY}/${env.ECR_REPOSITORY}"
           env.AUTH_TAG = "auth-${env.BUILD_TAG_RESOLVED}"
           env.STREAMING_TAG = "streaming-${env.BUILD_TAG_RESOLVED}"
           env.ADMIN_TAG = "admin-${env.BUILD_TAG_RESOLVED}"
           env.CHAT_TAG = "chat-${env.BUILD_TAG_RESOLVED}"
           env.FRONTEND_TAG = "frontend-${env.BUILD_TAG_RESOLVED}"
-          env.INGRESS_HOST = params.FRONTEND_PUBLIC_BASE_URL
+          env.INGRESS_HOST = env.FRONTEND_PUBLIC_BASE_URL
             .replaceFirst('^https?://', '')
             .replaceFirst('/.*$', '')
         }
